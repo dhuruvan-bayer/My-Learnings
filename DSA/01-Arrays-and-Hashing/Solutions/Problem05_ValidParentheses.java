@@ -11,22 +11,74 @@
  * 3. Every close bracket has a corresponding open bracket of the same type.
  * 
  * Approach:
- * [Your approach here - e.g., Use a Stack. Push opening brackets onto the stack.
- * For closing brackets, pop from stack and check if they match.]
+ * Use a Stack (LIFO) to track opening brackets. For each character:
+ * - Opening bracket → push to stack
+ * - Closing bracket → check if stack is empty or top doesn't match, return false
+ * - Otherwise pop the matching opening bracket
+ * Finally, stack must be empty (all brackets matched).
  * 
- * Time Complexity: O(?)
- * Space Complexity: O(?)
+ * Alternative: Store expected closing bracket instead of opening for cleaner logic.
  * 
- * Date Solved: 
+ * Time Complexity: O(n) - Single pass through string, each operation O(1)
+ * Space Complexity: O(n) - Worst case all opening brackets
+ * 
+ * Date Solved: December 9, 2025 
  */
 
 import java.util.*;
 
 public class Problem05_ValidParentheses {
     
+    // Solution 1: Store opening brackets (Your original approach - CORRECT!)
     public boolean isValid(String s) {
-        // TODO: Implement your solution here
-        return false;
+        Stack<Character> stack = new Stack<>();
+        
+        for (char c : s.toCharArray()) {
+            if (c == '{' || c == '[' || c == '(') {
+                stack.push(c);  // Store opening bracket
+            } else {
+                // Closing bracket encountered
+                if (stack.isEmpty()) {
+                    return false;  // No matching opening bracket
+                } else if (matches(stack.peek(), c)) {
+                    stack.pop();   // Valid pair found
+                } else {
+                    return false;  // Mismatch detected
+                }
+            }
+        }
+        
+        return stack.isEmpty();  // All brackets must be matched
+    }
+    
+    // Helper method for cleaner matching logic
+    private boolean matches(char open, char close) {
+        return (open == '(' && close == ')') ||
+               (open == '[' && close == ']') ||
+               (open == '{' && close == '}');
+    }
+    
+    // Solution 2: Store expected closing brackets (More elegant)
+    public boolean isValidOptimized(String s) {
+        Stack<Character> stack = new Stack<>();
+        
+        for (char c : s.toCharArray()) {
+            // Push expected closing bracket
+            if (c == '(') {
+                stack.push(')');
+            } else if (c == '[') {
+                stack.push(']');
+            } else if (c == '{') {
+                stack.push('}');
+            } else {
+                // Check if closing bracket matches expected
+                if (stack.isEmpty() || stack.pop() != c) {
+                    return false;
+                }
+            }
+        }
+        
+        return stack.isEmpty();
     }
     
     // Test cases
